@@ -82,14 +82,14 @@ public:
                 ::ReadFile(m_handlepipe, bytes.data(), PIPE_BUFFER_LENGTH, &dwLength, NULL);
                 if(dwLength > 0) {
                     bytes.resize(dwLength);
-                    m_parent->parseCommand(bytes);
+                    emit m_parent->received(bytes);
                 }
             }
             ::DisconnectNamedPipe(m_handlepipe);
         } while(1);
 
     }
-    bool isValid() { m_handlepipe != nullptr; }
+    bool isValid() { return m_handlepipe != nullptr; }
 
     HANDLE m_handlepipe;
     HANDLE m_event;
@@ -97,9 +97,9 @@ public:
     QNamedPipe* m_parent;
     bool m_willBeClose;
 };
-QNamedPipe::QNamedPipe(QString pipepath, bool valid, QObject *parent)
+QNamedPipe::QNamedPipe(QString name, bool valid, QObject *parent)
     : QObject(parent)
-    , d(valid ? new QNamedPipePrivate(this, pipepath) : nullptr)
+    , d(valid ? new QNamedPipePrivate(this, generatePipePath(name)) : nullptr)
 {
 
 }
