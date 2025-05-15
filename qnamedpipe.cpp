@@ -217,8 +217,9 @@ bool QNamedPipe::isServerMode()
 
 void QNamedPipe::waitAsync()
 {
-    if(d)
-        QtConcurrent::run(d, &QNamedPipePrivate::waitAsync);
+    if(d) {
+        QtConcurrent::run([&]{d->waitAsync();});
+    }
 }
 
 bool QNamedPipe::isValid()
